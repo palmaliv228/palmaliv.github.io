@@ -22,9 +22,15 @@
         }
 
         .container {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 20px;
+        }
+
+        .text-container {
+            position: relative;
+            padding: 10px;
         }
 
         .flip-card {
@@ -209,33 +215,49 @@
         }
 
         .grid-background {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: grid;
-            grid-template-columns: repeat(20, 1fr);
-            grid-template-rows: repeat(20, 1fr);
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(3, 1fr);
             z-index: -1;
-            opacity: 0.3;
         }
 
         .grid-cell {
-            width: 100%;
-            height: 100%;
-            transition: background-color 0.5s ease;
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset 0 0 5px rgba(255, 255, 255, 0.5),
+                0 0 10px currentColor;
+            position: relative;
+        }
+
+        .grid-cell::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            filter: blur(2px);
+            background: inherit;
+            opacity: 0.7;
         }
 
         body.dark-mode .grid-cell {
-            opacity: 0.15;
+            filter: brightness(1.8) contrast(1.2);
+            box-shadow: 
+                inset 0 0 8px rgba(255, 255, 255, 0.7),
+                0 0 15px currentColor;
         }
     </style>
 </head>
 <body class="dark-mode">
-    <div class="grid-background" id="grid"></div>
     <div class="particles-container">
-        <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
         <div class="particle"></div>
@@ -278,7 +300,10 @@
     </div>
     <div class="theme-switch" onclick="toggleTheme()"></div>
     <div class="container">
-        <div>Катя лох</div>
+        <div class="text-container">
+            <div class="grid-background" id="grid"></div>
+            <div style="position: relative; z-index: 1;">Катя лох</div>
+        </div>
         <div class="flip-card">
             <div class="flip-card-inner">
                 <div class="flip-card-front"></div>
@@ -298,12 +323,19 @@
             particle.style.top = Math.random() * 100 + 'vh';
         });
 
-        // Создаем сетку кубиков
+        // Обновляем создание сетки кубиков
         const grid = document.getElementById('grid');
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff', '#00ffff', '#ffff00'];
+        const colors = [
+            '#ff0066', // неоново-розовый
+            '#00ff66', // неоново-зеленый
+            '#6600ff', // яркий фиолетовый
+            '#ff3300', // ярко-красный
+            '#00ffff', // неоново-голубой
+            '#ffff00'  // ярко-желтый
+        ];
         
-        // Создаем 400 ячеек (20x20)
-        for (let i = 0; i < 400; i++) {
+        // Создаем меньше ячеек (8x3)
+        for (let i = 0; i < 24; i++) {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
             grid.appendChild(cell);
@@ -317,8 +349,10 @@
         // Анимация кубиков
         function animateCells() {
             document.querySelectorAll('.grid-cell').forEach(cell => {
-                if (Math.random() < 0.1) { // 10% шанс изменения цвета для каждого кубика
-                    cell.style.backgroundColor = getRandomColor();
+                if (Math.random() < 0.1) {
+                    const color = getRandomColor();
+                    cell.style.backgroundColor = color;
+                    cell.style.color = color; // для свечения
                 }
             });
         }
