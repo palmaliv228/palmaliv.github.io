@@ -207,9 +207,33 @@
                 opacity: 0;
             }
         }
+
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .grid-cell {
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.5s ease;
+        }
+
+        body.dark-mode .grid-cell {
+            opacity: 0.15;
+        }
     </style>
 </head>
 <body class="dark-mode">
+    <div class="grid-background" id="grid"></div>
     <div class="particles-container">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -273,6 +297,34 @@
             particle.style.left = Math.random() * 100 + 'vw';
             particle.style.top = Math.random() * 100 + 'vh';
         });
+
+        // Создаем сетку кубиков
+        const grid = document.getElementById('grid');
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ff00ff', '#00ffff', '#ffff00'];
+        
+        // Создаем 400 ячеек (20x20)
+        for (let i = 0; i < 400; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            grid.appendChild(cell);
+        }
+
+        // Функция для случайного цвета
+        function getRandomColor() {
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Анимация кубиков
+        function animateCells() {
+            document.querySelectorAll('.grid-cell').forEach(cell => {
+                if (Math.random() < 0.1) { // 10% шанс изменения цвета для каждого кубика
+                    cell.style.backgroundColor = getRandomColor();
+                }
+            });
+        }
+
+        // Запускаем анимацию каждые 100мс
+        setInterval(animateCells, 100);
     </script>
 </body>
 </html> 
